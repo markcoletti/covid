@@ -22,3 +22,14 @@ g <- ggplot(data=day.differences, aes(date,diffs))
 g + geom_line() + geom_smooth() + 
     labs(title = 'Day to day confirmed case differences', 
          subtitle = 'for Knoxville')
+
+# New code added by Io from the Knoxville reddit discord server
+offset_length = 14
+
+day.differences$offsetdiffs = c(rep(0, offset_length), day.differences$diffs[1:(length(day.differences$diffs) - offset_length)] )
+day.differences$revoveredish = cumsum(day.differences$offsetdiffs)
+
+KNOX$activeish = rep(0, length(KNOX$confirmed))
+KNOX$activeish[-1] = KNOX$confirmed[-1] - day.differences$revoveredish
+
+qplot(KNOX$date, KNOX$activeish) + geom_line()
